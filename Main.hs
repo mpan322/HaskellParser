@@ -48,3 +48,24 @@ main = do
     print "Testing Function Call"
     print $ run pFunCall "main(a + 2 * 5, b, c, s)"
     print $ run pFunCall "main()"
+
+
+newtype EnvT m a = EnvT { runEnvT :: m (Env a) }
+
+instance Functor (EnvT m) where
+    fmap env = do
+
+instance Monad (EnvT m) where
+    return = pure
+
+    (>>=) EnvT m a -> (a -> EnvT m b) -> EnvT m b 
+    (>>=) env f = EnvT $ do 
+        value <- runEnvT env
+        
+
+
+
+testEnv :: Env [Frame]
+testEnv = do
+    addFrame
+    Environment.get
