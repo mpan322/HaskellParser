@@ -149,9 +149,22 @@ bracket p = wrapped "{" "}" p
 
 program :: Parser Cons
 program = do
-    s <- statement
-    symbol ";"
-    return s
+    symbol ":q"
+    return Quit
+    |||
+    do
+        symbol "!"
+        return Last
+    |||
+    do
+        symbol "!"
+        n <- natural
+        return (Access n)
+    |||
+    do
+        s <- statement
+        symbol ";"
+        return s
 
 statement :: Parser Cons
 statement = do

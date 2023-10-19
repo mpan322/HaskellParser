@@ -1,7 +1,11 @@
 module Types where 
 
 -- top level constructs
-data Cons = Print Eval
+data Cons = None 
+    | Quit
+    | Last
+    | Access Int
+    | Print Eval
     | Eval Eval
     | For Cons Eval Cons [Cons]
     | While Eval [Cons]
@@ -20,10 +24,32 @@ data Eval = Val Data
     deriving Show
 
 -- data
-data Data = Int Int
+data Data = Nil 
+    | Int Int
     | Real Double
     | String String
     | Bool Bool
     | List [Eval]
     | Tuple [Eval] 
+    | Function [String] [Cons] Frame 
+    | Error String
     deriving Show
+
+data Variable = V (String, Data) deriving Show -- name, value
+getName :: Variable -> String
+getName (V pair) = fst pair
+
+makeVar :: String -> Data -> Variable
+makeVar name value = V (name, value) 
+
+getValue :: Variable -> Data
+getValue (V pair) = snd pair
+
+
+data BTree a = Leaf | Node a (BTree a) (BTree a) deriving Show
+type Frame = BTree Variable
+
+instance Functor BTree where
+    -- fmap :: (a -> b) -> BTree a -> BTree b
+    fmap f (Node v tl tr) = Node (f v) (fmap f tl) (fmap f tr)
+    fmap _ Leaf = Leaf
